@@ -126,7 +126,7 @@ int LidarMask::find_next_segment_index(std::vector<AngleSegment_t*>& segs, int c
 	return -1;
 }
 
-Status_t LidarMask::put_mask(const real* angles, int n, int* mask)
+Status_t LidarMask::put_mask(const real* angles, int n, int* mask, real* maskRatio)
 {
 	Status_t sta = OK;
 
@@ -148,8 +148,9 @@ Status_t LidarMask::put_mask(const real* angles, int n, int* mask)
 		return FAILED;
 	}
 
-	int idxSeg = 0;
-	real angle = 0.0;
+	int idxSeg  = 0;
+	int nMasked = 0;
+	real angle  = 0.0;
 
 	AngleSegment_t* pag = mSegments.at(idxSeg);
 
@@ -160,6 +161,7 @@ Status_t LidarMask::put_mask(const real* angles, int n, int* mask)
 		if ( angle >= pag->angle0 && angle <= pag->angle1 )
 		{
 			mask[i] = 1;
+			nMasked++;
 		}
 		else
 		{
@@ -175,6 +177,11 @@ Status_t LidarMask::put_mask(const real* angles, int n, int* mask)
 				pag = mSegments.at(idxSeg);
 			}
 		}
+	}
+
+	if ( LSG_NULL != maskRatio )
+	{
+		*maskRatio = 1.0 * nMasked / n;
 	}
 
 	return sta;

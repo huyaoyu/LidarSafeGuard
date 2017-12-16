@@ -30,7 +30,7 @@ public:
 
 	Status_t copy_push_segment(AngleSegment_t& aseg);
 
-	Status_t put_mask(const real* angles, int n, int* mask);
+	Status_t put_mask(const real* angles, int n, int* mask, real* maskRatio = LSG_NULL);
 
 	void clear_data(void);
 

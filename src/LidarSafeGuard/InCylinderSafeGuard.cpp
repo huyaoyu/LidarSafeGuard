@@ -70,11 +70,21 @@ void InCylinderSafeGuard::translate_coordinates(const real* coorXFrom, const rea
 	}
 }
 
-Status_t InCylinderSafeGuard::verify(LidarSafeGuard::SafetyFlag_t* flag)
+Status_t InCylinderSafeGuard::verify(real r, real rLimit, real stdLimit, LidarSafeGuard::SafetyFlag_t* flag)
 {
 	Status_t sta = FAILED;
 
 	mFlagSafe = LidarSafeGuard::FLAG_UNSAFE;
+
+	if ( r <= 0.0 || rLimit <= 0.0 || stdLimit <= 0.0 )
+	{
+		std::cout << "Invalid r or stdLimit." << std::endl
+				  << "r = " << r << ", "
+				  << "rLimit = " << rLimit << ", "
+				  << "stdLimit" << stdLimit << "." << std::endl;
+
+		return sta;
+	}
 
 	if ( LSG_NULL == mAngles || LSG_NULL == mRanges || 0 >= mDataLen)
 	{
@@ -101,6 +111,17 @@ Status_t InCylinderSafeGuard::verify(LidarSafeGuard::SafetyFlag_t* flag)
 
 	translate_coordinates(mCoorX_Ecc, mCoorY_Ecc, mDataLen, mEcc, mCoorX, mCoorY);
 
+	calculate_mean_radius(mCoorX, mCoorY, mDataLen, mRadiusMean, mRadiusStd);
+
+	if ( fabs(mRadiusMean - r) <= rLimit && mRadiusStd <= stdLimit )
+	{
+		mFlagSafe = FLAG_SAFE;
+	}
+	else
+	{
+		mFlagSafe = FLAG_UNSAFE;
+	}
+
 	if ( LSG_NULL != flag )
 	{
 		*flag = mFlagSafe;
@@ -111,37 +132,38 @@ Status_t InCylinderSafeGuard::verify(LidarSafeGuard::SafetyFlag_t* flag)
 	return sta;
 }
 
-real InCylinderSafeGuard::get_mean_radius(void)
+void InCylinderSafeGuard::calculate_mean_radius(const real* coorX, const real* coorY, int n, real& rMean, real& rStd)
 {
 	using namespace boost::accumulators;
 	accumulator_set<real, stats<tag::mean, tag::variance> > acc;
 
-	mRadiusMean = -1.0;
-
-	if ( LSG_NULL == mCoorX || LSG_NULL == mCoorY || mDataLen <= 0)
+	if ( LSG_NULL == coorX || LSG_NULL == coorY || n <= 0)
 	{
 		std::cout << "No data has been processed yet." << std::endl;
-		return mRadiusMean;
+		rMean = -1.0;
+		rStd  = -1.0;
+		return;
 	}
 
 	real r = 0.0;
 
-	for ( int i=0; i < mDataLen; ++i )
+	for ( int i=0; i < n; ++i )
 	{
-		r = sqrt( mCoorX[i] * mCoorX[i] + mCoorY[i] * mCoorY[i] ); // Possible lose of accuracy!
+		r = sqrt( coorX[i] * coorX[i] + coorY[i] * coorY[i] ); // Possible lose of accuracy!
 
 		acc(r);
 	}
 
-	real tempMean = mean( acc );
-	real tempStd  = sqrt( double( variance( acc ) * mDataLen / ( mDataLen - 1 ) ) );
+	rMean = mean( acc );
+	rStd  = sqrt( double( variance( acc ) * n / ( n - 1 ) ) );
+}
 
-	std::cout << "tempMean = " << tempMean << std::endl;
-	std::cout << "tempStd  = " << tempStd  << std::endl;
-
-	mRadiusMean = tempMean;
-	mRadiusStd  = tempStd;
-
+real InCylinderSafeGuard::get_radius_mean(void)
+{
 	return mRadiusMean;
 }
 
+real InCylinderSafeGuard::get_radius_std(void)
+{
+	return mRadiusStd;
+}
