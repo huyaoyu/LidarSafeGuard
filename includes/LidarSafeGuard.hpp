@@ -117,7 +117,8 @@ protected:
 	real mEcc;
 	real mPhaseAngle;
 
-	real mMeanRadius;
+	real mRadiusMean; // Sample mean.
+	real mRadiusStd;  // Sample standard deviation.
 
 	real* mCoorX_Ecc;
 	real* mCoorY_Ecc;

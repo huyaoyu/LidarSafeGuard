@@ -10,6 +10,11 @@
 #include <iostream>
 #include <math.h>
 
+#include <boost/accumulators/accumulators.hpp>
+#include <boost/accumulators/statistics/stats.hpp>
+#include <boost/accumulators/statistics/mean.hpp>
+#include <boost/accumulators/statistics/variance.hpp>
+
 #include "LidarSafeGuard.hpp"
 
 using namespace RP;
@@ -17,7 +22,7 @@ using namespace RP;
 InCylinderSafeGuard::InCylinderSafeGuard(const char* name, real ecc, real phaseAngle)
 : LidarSafeGuard::LidarSafeGuard(name),
   mEcc(ecc), mPhaseAngle(phaseAngle),
-  mMeanRadius(-1.0),
+  mRadiusMean(-1.0), mRadiusStd(-1.0),
   mCoorX_Ecc(LSG_NULL), mCoorY_Ecc(LSG_NULL), mCoorX(LSG_NULL), mCoorY(LSG_NULL)
 {
 
@@ -26,7 +31,7 @@ InCylinderSafeGuard::InCylinderSafeGuard(const char* name, real ecc, real phaseA
 InCylinderSafeGuard::InCylinderSafeGuard(std::string& name, real ecc, real phaseAngle)
 : LidarSafeGuard::LidarSafeGuard(name),
   mEcc(ecc), mPhaseAngle(phaseAngle),
-  mMeanRadius(-1.0),
+  mRadiusMean(-1.0), mRadiusStd(-1.0),
   mCoorX_Ecc(LSG_NULL), mCoorY_Ecc(LSG_NULL), mCoorX(LSG_NULL), mCoorY(LSG_NULL)
 {
 
@@ -108,25 +113,35 @@ Status_t InCylinderSafeGuard::verify(LidarSafeGuard::SafetyFlag_t* flag)
 
 real InCylinderSafeGuard::get_mean_radius(void)
 {
-	mMeanRadius = -1.0;
+	using namespace boost::accumulators;
+	accumulator_set<real, stats<tag::mean, tag::variance> > acc;
+
+	mRadiusMean = -1.0;
 
 	if ( LSG_NULL == mCoorX || LSG_NULL == mCoorY || mDataLen <= 0)
 	{
 		std::cout << "No data has been processed yet." << std::endl;
-		return mMeanRadius;
+		return mRadiusMean;
 	}
 
 	real r = 0.0;
-	real accRadius = 0.0;
 
 	for ( int i=0; i < mDataLen; ++i )
 	{
 		r = sqrt( mCoorX[i] * mCoorX[i] + mCoorY[i] * mCoorY[i] ); // Possible lose of accuracy!
-		accRadius += r;
+
+		acc(r);
 	}
 
-	mMeanRadius = accRadius / mDataLen;
+	real tempMean = mean( acc );
+	real tempStd  = sqrt( double( variance( acc ) * mDataLen / ( mDataLen - 1 ) ) );
 
-	return mMeanRadius;
+	std::cout << "tempMean = " << tempMean << std::endl;
+	std::cout << "tempStd  = " << tempStd  << std::endl;
+
+	mRadiusMean = tempMean;
+	mRadiusStd  = tempStd;
+
+	return mRadiusMean;
 }
 
