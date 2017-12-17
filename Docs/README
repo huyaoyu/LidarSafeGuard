@@ -1,0 +1,26 @@
+Lidar safe guard
+
+Author: Yaoyu Hu <huyaoyu@sjtu.edu.cn>
+
+Last updated: Dec. 17, 2017, 22:56 UTC +08:00.
+
+Introduction
+
+Prerequisite
+
+boost and Eigen.
+
+Compile and Link
+
+-lboost_chrono -lboost_system
+
+Usage
+
+The mask. The InCylinderSafeGuard class and the InCylRgrSafeGuard class.
+
+Acknoledgement
+
+Thanks to David.
+Thanks to Weikun Zhen.
+
+

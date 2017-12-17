@@ -3,6 +3,8 @@
  *
  *  Created on: Nov 28, 2017
  *      Author: yaoyu
+ *
+ *  Some helper utilities.
  */
 
 #ifndef INCLUDES_LIDARHELPER_HPP_
@@ -33,6 +35,7 @@
 
 namespace RP {
 
+// Change this definition if needed.
 typedef double real;
 
 typedef enum {
