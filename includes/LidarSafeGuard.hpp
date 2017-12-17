@@ -30,8 +30,10 @@ public:
 	LidarSafeGuard(const char* name);
 	LidarSafeGuard(std::string& name);
 	virtual ~LidarSafeGuard(void);
+
 	void set_mask(LidarMask* LM);
 	LidarMask* get_mask(void);
+
 	real get_inf_ratio(void);
 	real get_mask_ratio(void);
 
@@ -128,17 +130,17 @@ protected:
 	void calculate_mean_radius(const real* coorX, const real* coorY, int n, real& rMean, real& rStd);
 
 protected:
-	real mEcc;
-	real mPhaseAngle;
+	real mEcc;        // Installation eccentricity of the LIDAR [m].
+	real mPhaseAngle; // Installation angle of the LIDAR, [rad].
 
 	real mRadiusMean; // Sample mean.
 	real mRadiusStd;  // Sample standard deviation.
 
-	real* mCoorX_Ecc;
-	real* mCoorY_Ecc;
+	real* mCoorX_Ecc; // Coordinates in the eccentric frame.
+	real* mCoorY_Ecc; // Coordinates in the eccentric frame.
 
-	real* mCoorX;
-	real* mCoorY;
+	real* mCoorX;     // Coordinates in the concentric frame.
+	real* mCoorY;     // Coordinates in the concentric frame.
 };
 
 }
