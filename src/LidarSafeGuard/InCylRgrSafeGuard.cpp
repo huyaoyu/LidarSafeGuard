@@ -27,7 +27,7 @@ const real InCylRgrSafeGuard::RELAX        = 0.5;
 
 InCylRgrSafeGuard::InCylRgrSafeGuard(const char* name)
 :
-	InCylinderSafeGuard(name, 0.0, 0.0),
+	InCylinderSafeGuard(name, 0.0, 0.0, 0.0),
 	flagDebug(0),
 	mMaxIters(MAX_ITERS), mMaxResidual(MAX_RESIDUAL), mRelax(RELAX),
 	mIters(0), mResidual(0.0)
@@ -37,7 +37,7 @@ InCylRgrSafeGuard::InCylRgrSafeGuard(const char* name)
 
 InCylRgrSafeGuard::InCylRgrSafeGuard(std::string& name)
 :
-	InCylinderSafeGuard(name, 0.0, 0.0),
+	InCylinderSafeGuard(name, 0.0, 0.0, 0.0),
 	flagDebug(0),
 	mMaxIters(MAX_ITERS), mMaxResidual(MAX_RESIDUAL), mRelax(RELAX),
 	mIters(0), mResidual(0.0)

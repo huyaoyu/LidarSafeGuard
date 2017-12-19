@@ -3,6 +3,5 @@
 .settings/
 Debug/
 *.dat
-*.csv
 Docs/Doxygen/
 

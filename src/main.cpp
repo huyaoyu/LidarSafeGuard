@@ -212,7 +212,7 @@ Eigen::MatrixXd* read_csv_into_Eigen_matrix(std::string& fn)
 
 int test_read_csv_fiel_into_Eigen_matrix(void)
 {
-	std::string fn = "./Debug/RangesWithNoise.csv";
+	std::string fn = "./CSV/RangesWithNoise.csv";
 
 	Eigen::MatrixXd* matrix = LSG_NULL;
 
@@ -284,7 +284,7 @@ int test_naive_situation(void)
 	RP::real radiusMean = 0.0;
 	RP::real radiusStd  = 0.0;
 
-	RP::InCylinderSafeGuard icsg("RPLIDARSafeGuard", ecc, 0.0);
+	RP::InCylinderSafeGuard icsg("RPLIDARSafeGuard", ecc, 0.0, 0.0);
 
 	TIME_START;
 
@@ -295,15 +295,15 @@ int test_naive_situation(void)
 	RP::real ratioMask = icsg.get_mask_ratio();
 	RP::LidarSafeGuard::SafetyFlag_t safeFlag;
 
-	icsg.verify(1.0, 0.1*1.0, 0.1*1.0, &safeFlag);
+	icsg.verify(r, 0.1*r, 0.1*r, &safeFlag);
 	radiusMean = icsg.get_radius_mean();
 	radiusStd  = icsg.get_radius_std();
 
 	TIME_END;
 
 	std::cout << "radiusMean =  " << radiusMean << ", "
-			  << "radiusStd = " << radiusStd << "." << std::endl;
-	std::cout << "ratioInf = " << ratioInf << ", "
+			  << "radiusStd = "   << radiusStd  << "." << std::endl;
+	std::cout << "ratioInf = "  << ratioInf  << ", "
 			  << "ratioMask = " << ratioMask << "." << std::endl;
 
 	if ( RP::LidarSafeGuard::FLAG_SAFE == safeFlag )
@@ -328,8 +328,8 @@ int test_perfect_circle_with_noise(void)
 	std::cout << __func__ << std::endl;
 
 	// This is r = 1.0, ecc = 0.9 test data.
-//	std::string fn = "./Debug/RangesWithNoise_r1.00_ecc0.90_noiseAmp0.05.csv";
-	std::string fn = "./Debug/RangesWithNoise_r1.00_ecc0.90_noiseAmp0.10.csv";
+//	std::string fn = "./CSV/RangesWithNoise_r1.00_ecc0.90_noiseAmp0.05.csv";
+	std::string fn = "./CSV/RangesWithNoise_r1.00_ecc0.90_noiseAmp0.10.csv";
 
 	Eigen::MatrixXd* matrix = LSG_NULL;
 
@@ -361,7 +361,7 @@ int test_perfect_circle_with_noise(void)
 	RP::real radiusMean = 0.0;
 	RP::real radiusStd  = 0.0;
 
-	RP::InCylinderSafeGuard icsg("RPLIDARSafeGuard", ecc, 0.0);
+	RP::InCylinderSafeGuard icsg("RPLIDARSafeGuard", ecc, 0.0, 0.0);
 
 	TIME_START;
 
@@ -378,8 +378,8 @@ int test_perfect_circle_with_noise(void)
 	TIME_END;
 
 	std::cout << "radiusMean =  " << radiusMean << ", "
-			  << "radiusStd = " << radiusStd << "." << std::endl;
-	std::cout << "ratioInf = " << ratioInf << ", "
+			  << "radiusStd = "  << radiusStd   << "." << std::endl;
+	std::cout << "ratioInf = "  << ratioInf  << ", "
 			  << "ratioMask = " << ratioMask << "." << std::endl;
 
 	if ( RP::LidarSafeGuard::FLAG_SAFE == safeFlag )
@@ -405,7 +405,7 @@ int test_data_on_launchrig_no_mask(void)
 	// Show some information.
 	std::cout << __func__ << std::endl;
 
-	std::string fn = "./Debug/20171204_DataOnTheLaunchRig.csv";
+	std::string fn = "./CSV/20171204_DataOnTheLaunchRig.csv";
 
 	Eigen::MatrixXd* matrix = LSG_NULL;
 
@@ -437,7 +437,7 @@ int test_data_on_launchrig_no_mask(void)
 	RP::real radiusMean = 0.0, targetRadius = 0.528;
 	RP::real radiusStd  = 0.0;
 
-	RP::InCylinderSafeGuard icsg("RPLIDARSafeGuard", ecc, 0.0);
+	RP::InCylinderSafeGuard icsg("RPLIDARSafeGuard", ecc, 0.0, 0.0);
 
 	TIME_START;
 
@@ -454,8 +454,8 @@ int test_data_on_launchrig_no_mask(void)
 	TIME_END;
 
 	std::cout << "radiusMean =  " << radiusMean << ", "
-			  << "radiusStd = " << radiusStd << "." << std::endl;
-	std::cout << "ratioInf = " << ratioInf << ", "
+			  << "radiusStd = "   << radiusStd  << "." << std::endl;
+	std::cout << "ratioInf = "  << ratioInf  << ", "
 			  << "ratioMask = " << ratioMask << "." << std::endl;
 
 	if ( RP::LidarSafeGuard::FLAG_SAFE == safeFlag )
@@ -481,7 +481,7 @@ int test_data_on_launchrig_mask(void)
 	// Show some information.
 	std::cout << __func__ << std::endl;
 
-	std::string fn = "./Debug/20171204_DataOnTheLaunchRig.csv";
+	std::string fn = "./CSV/20171204_DataOnTheLaunchRig.csv";
 
 	Eigen::MatrixXd* matrix = LSG_NULL;
 
@@ -523,7 +523,7 @@ int test_data_on_launchrig_mask(void)
 	AS.angle1 = MY_PI;
 	LM.copy_push_segment(AS);
 
-	RP::InCylinderSafeGuard icsg("RPLIDARSafeGuard", ecc, 0.0);
+	RP::InCylinderSafeGuard icsg("RPLIDARSafeGuard", ecc, 0.0, 0.0);
 
 	TIME_START;
 
@@ -541,8 +541,8 @@ int test_data_on_launchrig_mask(void)
 	TIME_END;
 
 	std::cout << "radiusMean =  " << radiusMean << ", "
-			  << "radiusStd = " << radiusStd << "." << std::endl;
-	std::cout << "ratioInf = " << ratioInf << ", "
+			  << "radiusStd = "   << radiusStd  << "." << std::endl;
+	std::cout << "ratioInf = "  << ratioInf  << ", "
 			  << "ratioMask = " << ratioMask << "." << std::endl;
 
 	if ( RP::LidarSafeGuard::FLAG_SAFE == safeFlag )
@@ -568,7 +568,7 @@ int test_data_on_launchrig_mask_regression(void)
 	// Show some information.
 	std::cout << __func__ << std::endl;
 
-	std::string fn = "./Debug/20171204_DataOnTheLaunchRig.csv";
+	std::string fn = "./CSV/20171204_DataOnTheLaunchRig.csv";
 
 	Eigen::MatrixXd* matrix = LSG_NULL;
 

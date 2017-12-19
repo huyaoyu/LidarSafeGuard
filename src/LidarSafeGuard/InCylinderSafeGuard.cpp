@@ -19,18 +19,18 @@
 
 using namespace RP;
 
-InCylinderSafeGuard::InCylinderSafeGuard(const char* name, real ecc, real phaseAngle)
+InCylinderSafeGuard::InCylinderSafeGuard(const char* name, real ecc, real alpha, real beta)
 : LidarSafeGuard::LidarSafeGuard(name),
-  mEcc(ecc), mPhaseAngle(phaseAngle),
+  mEcc(ecc), mAlpha(alpha), mBeta(beta),
   mRadiusMean(-1.0), mRadiusStd(-1.0),
   mCoorX_Ecc(LSG_NULL), mCoorY_Ecc(LSG_NULL), mCoorX(LSG_NULL), mCoorY(LSG_NULL)
 {
 
 }
 
-InCylinderSafeGuard::InCylinderSafeGuard(std::string& name, real ecc, real phaseAngle)
+InCylinderSafeGuard::InCylinderSafeGuard(std::string& name, real ecc, real alpha, real beta)
 : LidarSafeGuard::LidarSafeGuard(name),
-  mEcc(ecc), mPhaseAngle(phaseAngle),
+  mEcc(ecc), mAlpha(alpha), mBeta(beta),
   mRadiusMean(-1.0), mRadiusStd(-1.0),
   mCoorX_Ecc(LSG_NULL), mCoorY_Ecc(LSG_NULL), mCoorX(LSG_NULL), mCoorY(LSG_NULL)
 {
@@ -61,12 +61,19 @@ void InCylinderSafeGuard::calculate_coordinates_in_ecc_frame(const real* angles,
 	}
 }
 
-void InCylinderSafeGuard::translate_coordinates(const real* coorXFrom, const real* coorYFrom, int len, real ecc, real* coorXTo, real* coorYTo)
+void InCylinderSafeGuard::translate_coordinates(const real* coorXFrom, const real* coorYFrom, int len,
+		real ecc, real alpha, real beta,
+		real* coorXTo, real* coorYTo)
 {
+	real cosAlphaE = cos(alpha) * ecc;
+	real sinAlphaE = sin(alpha) * ecc;
+	real cosBeta   = cos(beta);
+	real sinBeta   = sin(beta);
+
 	for ( int i=0; i < len; ++i )
 	{
-		coorXTo[i] = coorXFrom[i] + ecc;
-		coorYTo[i] = coorYFrom[i];
+		coorXTo[i] = cosBeta * coorXFrom[i] - sinBeta * coorYFrom[i] + cosAlphaE;
+		coorYTo[i] = sinBeta * coorXFrom[i] + cosBeta * coorYFrom[i] + sinAlphaE;
 	}
 }
 
@@ -109,7 +116,8 @@ Status_t InCylinderSafeGuard::verify(real r, real rLimit, real stdLimit, LidarSa
 
 	calculate_coordinates_in_ecc_frame(mAngles, mRanges, mDataLen, mCoorX_Ecc, mCoorY_Ecc);
 
-	translate_coordinates(mCoorX_Ecc, mCoorY_Ecc, mDataLen, mEcc, mCoorX, mCoorY);
+	translate_coordinates(mCoorX_Ecc, mCoorY_Ecc, mDataLen,
+			mEcc, mAlpha, mBeta, mCoorX, mCoorY);
 
 	calculate_mean_radius(mCoorX, mCoorY, mDataLen, mRadiusMean, mRadiusStd);
 

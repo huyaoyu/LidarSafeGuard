@@ -188,9 +188,10 @@ public:
 	 *
 	 * \param name The name of this safe guard.
 	 * \param ecc The eccentricity of the RPLIDAR.
-	 * \param phaseAngle The phaseAngle of the RPLIDAR.
+	 * \param alpha The phase angle of the RPLIDAR.
+	 * \param beta The phase angle of the RPLIDAR.
 	 */
-	InCylinderSafeGuard(const char* name, real ecc, real phaseAngle);
+	InCylinderSafeGuard(const char* name, real ecc, real alpha, real beta);
 
 	/**
 	 * Constructor.
@@ -199,9 +200,10 @@ public:
 	 *
 	 * \param name The name of this safe guard.
 	 * \param ecc The eccentricity of the RPLIDAR.
-	 * \param phaseAngle The phaseAngle of the RPLIDAR.
+	 * \param alpha The phase angle of the RPLIDAR.
+	 * \param beta The phase angle of the RPLIDAR.
 	 */
-	InCylinderSafeGuard(std::string& name, real ecc, real phaseAngle);
+	InCylinderSafeGuard(std::string& name, real ecc, real alpha, real beta);
 
 	~InCylinderSafeGuard(void);
 
@@ -255,7 +257,9 @@ protected:
 	 * to a concentric frame.
 	 *
 	 */
-	void translate_coordinates(const real* coorXFrom, const real* coorYFrom, int len, real ecc, real* coorXTo, real* coorYTo);
+	void translate_coordinates(const real* coorXFrom, const real* coorYFrom, int len,
+			real ecc, real alpha, real beta,
+			real* coorXTo, real* coorYTo);
 
 	/** \brief Utility function. Calculate the mean radius of the cylinder.
 	 *
@@ -268,7 +272,8 @@ protected:
 
 protected:
 	real mEcc;        /// Installation eccentricity of the LIDAR [m].
-	real mPhaseAngle; /// Installation angle of the LIDAR, [rad]. Not used currently.
+	real mAlpha;      /// Installation angle of the LIDAR, [rad].
+	real mBeta;       /// Another installation angle, [rad].
 
 	real mRadiusMean; /// Sample mean.
 	real mRadiusStd;  /// Sample standard deviation.
